@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs')
 const login = passport.authenticate('local', {
   successRedirect: "/login-success",
   failureRedirect: "/login-failure"
-});
+})
 
 const register = async (req, res, next) => {
   bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
@@ -13,29 +13,17 @@ const register = async (req, res, next) => {
       return next(err);
     }
     try {
-      await prisma.users.create({ 
+      await prisma.user.create({ 
         data: {
           username: req.body.username,
           password: hashedPassword,
         }
       });
-      res.redirect("/login");
+      res.status(200).json({message: "Register success"});
     } catch(err) {
       return next(err);
     }
   })
-}
-
-const index = (req, res, next) => {
-  res.render('index')
-}
-
-const loginForm = (req, res, next) => {
-  res.render('login')
-}
-
-const registerForm = (req, res, next) => {
-  res.render('register')
 }
 
 const logout = (req, res, next) => {
@@ -43,17 +31,21 @@ const logout = (req, res, next) => {
     if (err) {
       return next(err);
     }
-    res.redirect('/');
+    res.status(200).json({message:'Logout success'});
   }
   );
 }
 
-const redirectIndex = (req, res, next) => {
-  res.redirect('/');
+const loginSuccess = (req, res, next) => {
+  res.status(200).json({message: 'login success'});
 }
 
 const loginFailure =  (req, res, next) => {
-  res.render('login', {errors:[{msg:'Username or password did not match'}]})
+  res.status(403).json({errors:[{msg:'Username or password did not match'}]})
 }
 
-module.exports = {login, register, index, loginForm, registerForm, logout, redirectIndex, loginFailure}
+const protected = (req, res) => {
+  res.json({user: req.user})
+}
+
+module.exports = {login, register, logout, loginSuccess, loginFailure, protected}
