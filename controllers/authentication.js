@@ -1,6 +1,7 @@
 const passport = require('passport');
 const prisma = require('../db/prisma.js')
 const bcrypt = require('bcryptjs')
+const db = require('../db/queries.js')
 
 const login = passport.authenticate('local', {
   successRedirect: "/login-success",
@@ -47,5 +48,6 @@ const loginFailure =  (req, res, next) => {
 const protected = (req, res) => {
   res.json({user: req.user})
 }
+
 
 module.exports = {login, register, logout, loginSuccess, loginFailure, protected}

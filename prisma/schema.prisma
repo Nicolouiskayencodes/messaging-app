@@ -25,7 +25,7 @@ model User {
   username String @unique
   password String
   displayName String?
-  picture String?
+  avatar String?
   converstaions Conversation[]
   messages Message[]
   friends User[] @relation("Friends")
