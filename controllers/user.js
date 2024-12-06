@@ -1,3 +1,14 @@
+const multer  = require('multer')
+const storage = multer.memoryStorage({
+  filename: function (req, file, cb) {
+    crypto.pseudoRandomBytes(16, function (err, raw) {
+      cb(null, raw.toString('hex') + Date.now() + '.' + mime.extension(file.mimetype));
+    });
+  }
+});
+const upload = multer({ storage: storage })
+const {decode} = require('base64-arraybuffer')
+const supabase = require('../config/supabase.js')
 const db = require('../db/queries')
 const getUserInfo = async (req, res, next) => {
   if (req.user){
@@ -28,13 +39,39 @@ const changeName = async (req, res, next) => {
 
 const changeAvatar = async (req, res, next) => {
   if (req.user){
-    // insert multer and upload to cloud site, receive image url
+    upload.single('messaging-app')
+    const ext = req.file.originalname.split('.').pop()
+    const filename = Crypto.randomUUID() + '.'+ ext
     try {
-      // await db.changeAvatar(req.user.id, imageurl) 
-    } catch (error) {
-      return next(error)
-    }
-    
+      const file = req.file;
+      if (!file) {
+        res.status(400).json({ message: "Please upload a file"});
+        return
+      }
+      const fileBase64 = decode(file.buffer.toString('base64'))
+
+      const {data, error} = await supabase.storage
+      .from('messaging-app')
+      .upload(`public/${filename}`, fileBase64, {
+        contentType: file.mimetype
+      });
+      if (error) {
+        return next(error)
+      }
+      } catch (error) {
+        return next(error)
+      }
+      
+      const {data} = supabase.storage
+      .from('messaging-app')
+      .getPublicUrl(`public/${filename}`, {
+        download: true
+      });
+      try {
+        await db.changeAvatar(req.user.id, data.publicUrl) 
+      } catch (error) {
+        return next(error)
+      }
   } else {
     return res.status(401).json({message: "Not authenticated"})
   }
@@ -71,9 +108,36 @@ const openConversation = async (req, res, next) => {
 const sendMessage = async (req, res, next) => {
   if (req.user) {
     if (req.body.picture !== null){
-      // multer for image
+      upload.single('uploaded_file')
+    const ext = req.file.originalname.split('.').pop()
+    const filename = Crypto.randomUUID() + '.'+ ext
+    try {
+      const file = req.file;
+      if (!file) {
+        res.status(400).json({ message: "Please upload a file"});
+        return
+      }
+      const fileBase64 = decode(file.buffer.toString('base64'))
+
+      const {data, error} = await supabase.storage
+      .from('messaging-app')
+      .upload(`public/${filename}`, fileBase64, {
+        contentType: file.mimetype
+      });
+      if (error) {
+        return next(error)
+      }
+      } catch (error) {
+        return next(error)
+      }
+      
+      const {data} = supabase.storage
+      .from('messaging-app')
+      .getPublicUrl(`public/${filename}`, {
+        download: true
+      });
       try {
-        // await db.sendPictureMessage(req.params.conversationid, req.user.id, req.body.content, imageurl)
+        await db.sendPictureMessage(req.user.id, data.publicUrl) 
       } catch (error) {
         return next(error)
       }
@@ -90,9 +154,36 @@ const sendMessage = async (req, res, next) => {
 const updateMessage = async (req, res, next) => {
   if (req.user) {
     if (req.body.picture !== null){
-      // multer for image
+      upload.single('uploaded_file')
+    const ext = req.file.originalname.split('.').pop()
+    const filename = Crypto.randomUUID() + '.'+ ext
+    try {
+      const file = req.file;
+      if (!file) {
+        res.status(400).json({ message: "Please upload a file"});
+        return
+      }
+      const fileBase64 = decode(file.buffer.toString('base64'))
+
+      const {data, error} = await supabase.storage
+      .from('messaging-app')
+      .upload(`public/${filename}`, fileBase64, {
+        contentType: file.mimetype
+      });
+      if (error) {
+        return next(error)
+      }
+      } catch (error) {
+        return next(error)
+      }
+      
+      const {data} = supabase.storage
+      .from('messaging-app')
+      .getPublicUrl(`public/${filename}`, {
+        download: true
+      });
       try {
-        // await db.updatePictureMessage(req.params.messageid, req.user.id, req.body.content, imageurl)
+        await db.updatePictureMessage(req.user.id, data.publicUrl) 
       } catch (error) {
         return next(error)
       }

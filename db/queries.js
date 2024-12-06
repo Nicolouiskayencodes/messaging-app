@@ -1,4 +1,3 @@
-const { connect } = require('../routes/routes.js')
 const prisma = require('./prisma.js')
 
 async function getUserInfo(id){
@@ -9,7 +8,11 @@ async function getUserInfo(id){
     data: {
       include: {
         conversations: true,
-        friends: true
+        friends: {
+          displayName: true,
+          lastActive: true,
+          orderBy: lastActive,
+        }
       }
     }
   })
@@ -31,9 +34,6 @@ async function changeAvatar(id, url) {
   await prisma.user.update({
     where: {
       id: id,
-      users: {
-
-      }
     },
     data: {
       picture: url,
@@ -55,6 +55,18 @@ async function makeConversation(userarray) {
 }
 
 async function getConversation(conversationid, userid) {
+  await prisma.message.update({
+    where: {
+      conversationId: conversationid
+    },
+    data: {
+      readBy: {
+        connect: {
+          id: userid
+        }
+      }
+    }
+  })
   await prisma.conversation.findUnique({
     where: {
       id: conversationid,
@@ -131,5 +143,12 @@ async function addFriend(userid, friendid) {
   })
 }
 
+async function getUsers() {
+  const users = await prisma.user.findMany({
+    orderBy: displayName
+  })
+  return users
+}
 
-module.exports = { getUserInfo, changeName, changeAvatar, makeConversation, getConversation, sendMessage, sendPictureMessage, updateMessage, updatePictureMessage, addFriend }
+
+module.exports = { getUserInfo, changeName, changeAvatar, makeConversation, getConversation, sendMessage, sendPictureMessage, updateMessage, updatePictureMessage, addFriend, getUsers }
