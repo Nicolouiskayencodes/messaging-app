@@ -1,3 +1,4 @@
+const { connect } = require('../routes/routes.js')
 const prisma = require('./prisma.js')
 
 async function getUserInfo(id){
@@ -40,6 +41,19 @@ async function changeAvatar(id, url) {
   })
 }
 
+async function makeConversation(userarray) {
+  const usersQuery = []
+  userarray.map(userid => {
+    usersQuery.push({id: userid})
+  })
+  await prisma.conversation.create({
+    data: {
+      user: {
+        connect: usersQuery
+      }
+  }})
+}
+
 async function getConversation(conversationid, userid) {
   await prisma.conversation.findUnique({
     where: {
@@ -75,5 +89,47 @@ async function sendPictureMessage(conversationid, userid, content, imageurl) {
   )
 }
 
+async function updateMessage(messageid, userid, content) {
+  await prisma.message.update({
+    where: {
+      id: messageid,
+      authorId: userid
+    },
+    data: {
+      content: content,
+    },
+  }
+  )
+}
 
-module.exports = { getUserInfo, changeName, changeAvatar, getConversation, sendMessage, sendPictureMessage }
+async function updatePictureMessage(messageid, userid, content, imageurl) {
+  await prisma.message.update({
+    where: {
+      id: messageid,
+      authorId: userid
+    },
+    data: {
+      content: content,
+      picture: imageurl,
+    },
+  }
+  )
+}
+
+async function addFriend(userid, friendid) {
+  await prisma.user.update({
+    where: {
+      id: userid,
+    },
+    data: {
+      friends: {
+        connect: {
+          id: friendid
+        }
+      }
+    }
+  })
+}
+
+
+module.exports = { getUserInfo, changeName, changeAvatar, makeConversation, getConversation, sendMessage, sendPictureMessage, updateMessage, updatePictureMessage, addFriend }

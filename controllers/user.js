@@ -40,6 +40,20 @@ const changeAvatar = async (req, res, next) => {
   }
 }
 
+const makeConversation = async (req, res, next) => {
+  if (req.user){
+    try {
+      await db.makeConversation(req.body.userarray)
+      return res.status(200).json('success')
+    } catch (error) {
+      return next(error)
+    }
+    
+  } else {
+    return res.status(401).json({message: "Not authenticated"})
+  }
+}
+
 const openConversation = async (req, res, next) => {
   if (req.user){
     try {
@@ -73,6 +87,39 @@ const sendMessage = async (req, res, next) => {
     return res.status(401).json({message: "Not authenticated"})
   }
 }
+const updateMessage = async (req, res, next) => {
+  if (req.user) {
+    if (req.body.picture !== null){
+      // multer for image
+      try {
+        // await db.updatePictureMessage(req.params.messageid, req.user.id, req.body.content, imageurl)
+      } catch (error) {
+        return next(error)
+      }
+    } else {
+      try {
+      await db.updateMessage(req.params.messageid, req.user.id, req.body.content)
+    } catch (error) {
+      return next(error)
+    }}
+  } else {
+    return res.status(401).json({message: "Not authenticated"})
+  }
+}
+
+const addFriend = async ( req, res, next ) => {
+  if (req.user){
+    try {
+      await db.addFriend(req.user.id, req.params.friendid)
+      return res.status(200).json('success')
+    } catch (error) {
+      return next(error)
+    }
+    
+  } else {
+    return res.status(401).json({message: "Not authenticated"})
+  }
+}
 
 
-module.exports = { getUserInfo, changeName, changeAvatar, openConversation }
+module.exports = { getUserInfo, changeName, changeAvatar, makeConversation, openConversation, sendMessage, updateMessage, addFriend }
