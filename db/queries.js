@@ -5,16 +5,17 @@ async function getUserInfo(id){
     where: {
       id: id
     },
-    data: {
       include: {
         conversations: true,
         friends: {
+          select:{
           displayName: true,
+          username: true,
           lastActive: true,
-          orderBy: lastActive,
+        },
+        orderBy: {lastActive: 'desc'},
         }
-      }
-    }
+      },
   })
   return user
 }

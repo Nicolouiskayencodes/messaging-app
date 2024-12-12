@@ -26,7 +26,7 @@ model User {
   password String
   displayName String?
   avatar String?
-  converstaions Conversation[]
+  conversations Conversation[]
   messages Message[]
   friends User[] @relation("Friends")
   followedBy User[] @relation("Friends")
