@@ -38,7 +38,7 @@ const logout = (req, res, next) => {
 }
 
 const loginSuccess = (req, res, next) => {
-  res.status(200).json({message: 'login success'});
+  res.status(200).json(req.user);
 }
 
 const loginFailure =  (req, res, next) => {

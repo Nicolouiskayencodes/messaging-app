@@ -144,9 +144,13 @@ async function addFriend(userid, friendid) {
   })
 }
 
-async function getUsers() {
+async function getUsers(id) {
   const users = await prisma.user.findMany({
-    orderBy: displayName
+    where: {
+      NOT: {
+        id: id
+      }
+    }
   })
   return users
 }

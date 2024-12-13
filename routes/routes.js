@@ -17,5 +17,6 @@ router.post('/conversation', controller.userController.makeConversation)
 router.post('/message/:conversationid', controller.userController.sendMessage)
 router.put('/message/:messageid', controller.userController.updateMessage)
 router.put('/friend/:friendid', controller.userController.addFriend)
+router.get('/users', controller.userController.getUsers)
 
 module.exports = router;

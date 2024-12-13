@@ -94,7 +94,7 @@ const makeConversation = async (req, res, next) => {
 const openConversation = async (req, res, next) => {
   if (req.user){
     try {
-      const conversation = await db.getConversation(req.params.conversationid, req.user.id)
+      const conversation = await db.getConversation(parseInt(req.params.conversationid), req.user.id)
       return res.status(200).json(conversation)
     } catch (error) {
       return next(error)
@@ -143,7 +143,7 @@ const sendMessage = async (req, res, next) => {
       }
     } else {
       try {
-      await db.sendMessage(req.params.conversationid, req.user.id, req.body.content)
+      await db.sendMessage(parseInt(req.params.conversationid), req.user.id, req.body.content)
     } catch (error) {
       return next(error)
     }}
@@ -189,7 +189,7 @@ const updateMessage = async (req, res, next) => {
       }
     } else {
       try {
-      await db.updateMessage(req.params.messageid, req.user.id, req.body.content)
+      await db.updateMessage(parseInt(req.params.messageid), req.user.id, req.body.content)
     } catch (error) {
       return next(error)
     }}
@@ -201,7 +201,7 @@ const updateMessage = async (req, res, next) => {
 const addFriend = async ( req, res, next ) => {
   if (req.user){
     try {
-      await db.addFriend(req.user.id, req.params.friendid)
+      await db.addFriend(req.user.id, parseInt(req.params.friendid))
       return res.status(200).json('success')
     } catch (error) {
       return next(error)
@@ -212,5 +212,20 @@ const addFriend = async ( req, res, next ) => {
   }
 }
 
+const getUsers = async (req, res, next) => {
+  if (req.user){
+    try {
+      const users = await db.getUsers(req.user.id)
+      console.log(users)
+      return res.status(200).json(users)
+    } catch (error) {
+      return next(error)
+    }
+    
+  } else {
+    return res.status(401).json({message: "Not authenticated"})
+  }
+}
 
-module.exports = { getUserInfo, changeName, changeAvatar, makeConversation, openConversation, sendMessage, updateMessage, addFriend }
+
+module.exports = { getUserInfo, changeName, changeAvatar, makeConversation, openConversation, sendMessage, updateMessage, addFriend, getUsers }
