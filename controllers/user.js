@@ -78,9 +78,11 @@ const changeAvatar = async (req, res, next) => {
 }
 
 const makeConversation = async (req, res, next) => {
+  const userarray = req.body.userarray
+  userarray.unshift(req.user)
   if (req.user){
     try {
-      await db.makeConversation(req.body.userarray)
+      await db.makeConversation(userarray)
       return res.status(200).json('success')
     } catch (error) {
       return next(error)

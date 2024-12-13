@@ -1,3 +1,4 @@
+const { connect } = require('../routes/routes.js')
 const prisma = require('./prisma.js')
 
 async function getUserInfo(id){
@@ -6,7 +7,7 @@ async function getUserInfo(id){
       id: id
     },
       include: {
-        conversations: true,
+        conversations: {include: {Users: true},},
         friends: {
           select:{
           displayName: true,
@@ -44,16 +45,46 @@ async function changeAvatar(id, url) {
 
 async function makeConversation(userarray) {
   const usersQuery = []
-  userarray.map(userid => {
-    usersQuery.push({id: userid})
+  const userIds = []
+  let exists = true
+  userarray.map(user => {
+    usersQuery.push({id: user.id})
+    userIds.push(user.id)
   })
-  await prisma.conversation.create({
-    data: {
-      user: {
-        connect: usersQuery
+  const users = await prisma.user.findMany({
+      where: {
+        id: {in: userIds},
+      },
+      include: {
+        conversations: {
+          include: {
+            Users:true,
+          },
+          },
+          
       }
-  }})
-}
+    })
+    console.log(users)
+    for(i=1; i<users.length; i++){
+      if (!users[0].conversations.some(conversation => {return conversation.Users.some(user => {return user.id === users[i].id})})){
+        exists = false
+      } else {
+        console.log(users[0].conversations.some(conversation => {return conversation.Users.some(user => {return user.id === users[i].id})}))
+      }
+    }
+    console.log(exists)
+    if(exists === false) {
+      await prisma.conversation.create({
+        data: {
+          Users: {
+              connect: usersQuery
+          },
+        },
+        
+      })
+    }
+  }
+
 
 async function getConversation(conversationid, userid) {
   await prisma.message.update({
