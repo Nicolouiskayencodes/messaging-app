@@ -46,7 +46,8 @@ async function changeAvatar(id, url) {
 async function makeConversation(userarray) {
   const usersQuery = []
   const userIds = []
-  let exists = true
+  let exists = true;
+  let conversationId = null;
   userarray.map(user => {
     usersQuery.push({id: user.id})
     userIds.push(user.id)
@@ -66,22 +67,30 @@ async function makeConversation(userarray) {
     })
     console.log(users)
     for(i=1; i<users.length; i++){
-      if (!users[0].conversations.some(conversation => {return conversation.Users.some(user => {return user.id === users[i].id})})){
+      if (!users[0].conversations.some(conversation => {return (conversation.Users.some(user => {return user.id === users[i].id}) && conversation.Users.length === users.length)})) {
         exists = false
       } else {
-        console.log(users[0].conversations.some(conversation => {if (conversation.Users.some(user => {return user.id === users[i].id})){return conversation.id}}))
+        users[0].conversations.forEach(conversation => {if (conversation.Users.length === users.length){
+          if (conversation.Users.every(user => {return (userIds.includes(user.id))})){ conversationId = conversation.id }
+        }})
+
+        } 
       }
-    }
-    console.log(exists)
-    if(exists === false) {
-      await prisma.conversation.create({
+    if(exists === false ) {
+      const conversation = await prisma.conversation.create({
         data: {
           Users: {
               connect: usersQuery
           },
         },
-        
       })
+      return conversation;
+    } else {
+      const conversation = await prisma.conversation.findUnique({ where: {
+        id: conversationId,},
+        include: { Users: true,},
+      })
+      return conversation;
     }
   }
 

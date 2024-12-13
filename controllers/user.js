@@ -82,8 +82,8 @@ const makeConversation = async (req, res, next) => {
   userarray.unshift(req.user)
   if (req.user){
     try {
-      await db.makeConversation(userarray)
-      return res.status(200).json('success')
+      const conversation = await db.makeConversation(userarray)
+      return res.status(200).json(conversation)
     } catch (error) {
       return next(error)
     }
