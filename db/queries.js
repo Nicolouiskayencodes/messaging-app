@@ -69,7 +69,7 @@ async function makeConversation(userarray) {
       if (!users[0].conversations.some(conversation => {return conversation.Users.some(user => {return user.id === users[i].id})})){
         exists = false
       } else {
-        console.log(users[0].conversations.some(conversation => {return conversation.Users.some(user => {return user.id === users[i].id})}))
+        console.log(users[0].conversations.some(conversation => {if (conversation.Users.some(user => {return user.id === users[i].id})){return conversation.id}}))
       }
     }
     console.log(exists)
