@@ -1,5 +1,14 @@
 const router = require('express').Router();
 const controller = require('../controllers')
+const multer  = require('multer')
+const storage = multer.memoryStorage({
+  filename: function (req, file, cb) {
+    crypto.pseudoRandomBytes(16, function (err, raw) {
+      cb(null, raw.toString('hex') + Date.now() + '.' + mime.extension(file.mimetype));
+    });
+  }
+});
+const upload = multer({ storage: storage })
 
 router.post('/login', controller.authenticationController.login);
 router.post('/register', controller.authenticationController.register);
@@ -14,7 +23,7 @@ router.put('/updatename', controller.userController.changeName)
 router.put('/updateavatar', controller.userController.changeAvatar)
 router.get('/conversation/:conversationid', controller.userController.openConversation)
 router.post('/conversation', controller.userController.makeConversation)
-router.post('/message/:conversationid', controller.userController.sendMessage)
+router.post('/message/:conversationid', upload.single('file'), controller.userController.sendMessage)
 router.put('/message/:messageid', controller.userController.updateMessage)
 router.put('/friend/:friendid', controller.userController.addFriend)
 router.get('/users', controller.userController.getUsers)

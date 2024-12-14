@@ -1,14 +1,7 @@
-const multer  = require('multer')
-const storage = multer.memoryStorage({
-  filename: function (req, file, cb) {
-    crypto.pseudoRandomBytes(16, function (err, raw) {
-      cb(null, raw.toString('hex') + Date.now() + '.' + mime.extension(file.mimetype));
-    });
-  }
-});
-const upload = multer({ storage: storage })
-const {decode} = require('base64-arraybuffer')
+const Crypto = require('crypto')
 const supabase = require('../config/supabase.js')
+const {decode} = require('base64-arraybuffer')
+
 const db = require('../db/queries')
 const getUserInfo = async (req, res, next) => {
   if (req.user){
@@ -109,12 +102,11 @@ const openConversation = async (req, res, next) => {
 
 const sendMessage = async (req, res, next) => {
   if (req.user) {
-    if (req.body.picture !== null){
-      upload.single('uploaded_file')
-    const ext = req.file.originalname.split('.').pop()
-    const filename = Crypto.randomUUID() + '.'+ ext
-    try {
+    if (req.file) {
+      const ext = req.file.originalname.split('.').pop()
+      const filename = Crypto.randomUUID() + '.'+ ext
       const file = req.file;
+    try {
       if (!file) {
         res.status(400).json({ message: "Please upload a file"});
         return
@@ -139,13 +131,13 @@ const sendMessage = async (req, res, next) => {
         download: true
       });
       try {
-        await db.sendPictureMessage(req.user.id, data.publicUrl) 
+        await db.sendPictureMessage(parseInt(req.params.conversationid), parseInt(req.user.id), data.publicUrl) 
       } catch (error) {
         return next(error)
       }
     } else {
       try {
-      await db.sendMessage(parseInt(req.params.conversationid), req.user.id, req.body.content)
+      await db.sendMessage(parseInt(req.params.conversationid), parseInt(req.user.id), req.body.content)
     } catch (error) {
       return next(error)
     }}

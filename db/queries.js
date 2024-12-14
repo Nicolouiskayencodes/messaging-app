@@ -1,4 +1,3 @@
-const { connect } = require('../routes/routes.js')
 const prisma = require('./prisma.js')
 
 async function getUserInfo(id){
@@ -66,6 +65,7 @@ async function makeConversation(userarray) {
       }
     })
     console.log(users)
+    //This took me like an hour an a half to figure out - I probably could have made it easier by making the relation explicit and therefore queryable
     for(i=1; i<users.length; i++){
       if (!users[0].conversations.some(conversation => {return (conversation.Users.some(user => {return user.id === users[i].id}) && conversation.Users.length === users.length)})) {
         exists = false
@@ -96,27 +96,34 @@ async function makeConversation(userarray) {
 
 
 async function getConversation(conversationid, userid) {
-  await prisma.message.update({
+  console.log(conversationid)
+  await prisma.conversation.update({
     where: {
-      conversationId: conversationid
+      id: conversationid
     },
     data: {
       readBy: {
-        connect: {
+        connect: [{
           id: userid
-        }
-      }
-    }
+        }],
+        },
+      },
   })
-  await prisma.conversation.findUnique({
+  const conversation = await prisma.conversation.findUnique({
     where: {
       id: conversationid,
-      users: {
+      Users: {
         some:{
           id: userid
       }}
+    },
+    include: {
+      Messages: {
+        include: {author: true}
+      }
     }
   })
+  return conversation
 }
 
 async function sendMessage(conversationid, userid, content) {
@@ -130,13 +137,12 @@ async function sendMessage(conversationid, userid, content) {
   )
 }
 
-async function sendPictureMessage(conversationid, userid, content, imageurl) {
+async function sendPictureMessage(conversationid, userid, imageurl) {
   await prisma.message.create({
     data: {
       conversationId: conversationid,
       authorId: userid,
-      content: content,
-      picture: imageurl
+      image: imageurl
     },
   }
   )

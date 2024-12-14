@@ -30,7 +30,7 @@ model User {
   messages Message[]
   friends User[] @relation("Friends")
   followedBy User[] @relation("Friends")
-  read Message[] @relation("Read")
+  read Conversation[] @relation("Read")
   lastActive DateTime?
 }
 
@@ -38,6 +38,7 @@ model Conversation {
   id    Int     @id @default(autoincrement())
   Messages Message[]
   Users User[]
+  readBy User[] @relation("Read")
 }
 
 model Message {
@@ -46,9 +47,8 @@ model Message {
   conversationId Int
   author User @relation(fields: [authorId], references: [id])
   authorId Int
-  readBy User[] @relation("Read")
   createdAt DateTime @default(now())
   updateAt DateTime? @updatedAt
   image String?
-  content String
+  content String?
 }
