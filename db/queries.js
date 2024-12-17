@@ -9,9 +9,10 @@ async function getUserInfo(id){
         conversations: {include: {Users: true, readBy: true},},
         friends: {
           select:{
-          displayName: true,
-          username: true,
-          lastActive: true,
+            id: true,
+            displayName: true,
+            username: true,
+            lastActive: true,
         },
         orderBy: {lastActive: 'desc'},
         }
@@ -119,8 +120,9 @@ async function getConversation(conversationid, userid) {
     },
     include: {
       Messages: {
-        include: {author: true}
-      }
+        include: {author: true},
+      },
+      Users: true,
     }
   })
   return conversation
