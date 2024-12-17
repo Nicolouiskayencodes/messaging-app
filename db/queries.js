@@ -13,6 +13,14 @@ async function getUserInfo(id){
             displayName: true,
             username: true,
             lastActive: true,
+            avatar: true,
+            conversations: {
+              where:{Users: {some:{id: id}}},
+              select: {
+                id: true,
+                Users: true
+              }
+            }
         },
         orderBy: {lastActive: 'desc'},
         }
@@ -38,7 +46,7 @@ async function changeAvatar(id, url) {
       id: id,
     },
     data: {
-      picture: url,
+      avatar: url,
     },
   })
 }
@@ -162,6 +170,15 @@ async function updateMessage(messageid, userid, content) {
   }
   )
 }
+async function deleteMessage( messageid, userid ) {
+  await prisma.message.delete({
+    where: {
+      id: messageid,
+      authorId: userid
+    },
+  }
+  )
+}
 
 async function updatePictureMessage(messageid, userid, content, imageurl) {
   await prisma.message.update({
@@ -204,4 +221,4 @@ async function getUsers(id) {
 }
 
 
-module.exports = { getUserInfo, changeName, changeAvatar, makeConversation, getConversation, sendMessage, sendPictureMessage, updateMessage, updatePictureMessage, addFriend, getUsers }
+module.exports = { getUserInfo, changeName, changeAvatar, makeConversation, getConversation, sendMessage, sendPictureMessage, updateMessage, updatePictureMessage, addFriend, getUsers, updateMessage, deleteMessage }

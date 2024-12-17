@@ -25,6 +25,7 @@ router.get('/conversation/:conversationid', controller.userController.openConver
 router.post('/conversation', controller.userController.makeConversation)
 router.post('/message/:conversationid', upload.single('file'), controller.userController.sendMessage)
 router.put('/message/:messageid', controller.userController.updateMessage)
+router.delete('/message/:messageid', controller.userController.deleteMessage)
 router.put('/friend/:friendid', controller.userController.addFriend)
 router.get('/users', controller.userController.getUsers)
 

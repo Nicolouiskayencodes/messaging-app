@@ -148,7 +148,19 @@ const updateMessage = async (req, res, next) => {
   if (req.user) {
    
       try {
-      await db.updateMessage(parseInt(req.params.messageid), req.user.id, req.body.content)
+      await db.updateMessage(parseInt(req.params.messageid), req.user.id, req.body.content )
+    } catch (error) {
+      return next(error)
+    }
+  } else {
+    return res.status(401).json({message: "Not authenticated"})
+  }
+}
+const deleteMessage = async (req, res, next) => {
+  if (req.user) {
+   
+      try {
+      await db.deleteMessage(parseInt(req.params.messageid), req.user.id)
     } catch (error) {
       return next(error)
     }
@@ -187,4 +199,4 @@ const getUsers = async (req, res, next) => {
 }
 
 
-module.exports = { getUserInfo, changeName, changeAvatar, makeConversation, openConversation, sendMessage, updateMessage, addFriend, getUsers }
+module.exports = { getUserInfo, changeName, changeAvatar, makeConversation, openConversation, sendMessage, updateMessage, addFriend, getUsers, deleteMessage }
