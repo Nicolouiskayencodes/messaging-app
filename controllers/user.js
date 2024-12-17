@@ -32,7 +32,6 @@ const changeName = async (req, res, next) => {
 
 const changeAvatar = async (req, res, next) => {
   if (req.user){
-    upload.single('messaging-app')
     const ext = req.file.originalname.split('.').pop()
     const filename = Crypto.randomUUID() + '.'+ ext
     try {
@@ -147,46 +146,12 @@ const sendMessage = async (req, res, next) => {
 }
 const updateMessage = async (req, res, next) => {
   if (req.user) {
-    if (req.body.picture !== null){
-      upload.single('uploaded_file')
-    const ext = req.file.originalname.split('.').pop()
-    const filename = Crypto.randomUUID() + '.'+ ext
-    try {
-      const file = req.file;
-      if (!file) {
-        res.status(400).json({ message: "Please upload a file"});
-        return
-      }
-      const fileBase64 = decode(file.buffer.toString('base64'))
-
-      const {data, error} = await supabase.storage
-      .from('messaging-app')
-      .upload(`public/${filename}`, fileBase64, {
-        contentType: file.mimetype
-      });
-      if (error) {
-        return next(error)
-      }
-      } catch (error) {
-        return next(error)
-      }
-      
-      const {data} = supabase.storage
-      .from('messaging-app')
-      .getPublicUrl(`public/${filename}`, {
-        download: true
-      });
-      try {
-        await db.updatePictureMessage(req.user.id, data.publicUrl) 
-      } catch (error) {
-        return next(error)
-      }
-    } else {
+   
       try {
       await db.updateMessage(parseInt(req.params.messageid), req.user.id, req.body.content)
     } catch (error) {
       return next(error)
-    }}
+    }
   } else {
     return res.status(401).json({message: "Not authenticated"})
   }

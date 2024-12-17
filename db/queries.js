@@ -6,7 +6,7 @@ async function getUserInfo(id){
       id: id
     },
       include: {
-        conversations: {include: {Users: true},},
+        conversations: {include: {Users: true, readBy: true},},
         friends: {
           select:{
           displayName: true,

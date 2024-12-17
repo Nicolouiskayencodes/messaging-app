@@ -20,7 +20,7 @@ router.get("/protected", controller.authenticationController.protected)
 
 router.get('/userinfo', controller.userController.getUserInfo)
 router.put('/updatename', controller.userController.changeName)
-router.put('/updateavatar', controller.userController.changeAvatar)
+router.put('/updateavatar', upload.single('file'), controller.userController.changeAvatar)
 router.get('/conversation/:conversationid', controller.userController.openConversation)
 router.post('/conversation', controller.userController.makeConversation)
 router.post('/message/:conversationid', upload.single('file'), controller.userController.sendMessage)
