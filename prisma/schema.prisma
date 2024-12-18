@@ -39,6 +39,7 @@ model Conversation {
   Messages Message[]
   Users User[]
   readBy User[] @relation("Read")
+  updateAt DateTime? @updatedAt @default(now())
 }
 
 model Message {
@@ -48,7 +49,7 @@ model Message {
   author User @relation(fields: [authorId], references: [id])
   authorId Int
   createdAt DateTime @default(now())
-  updateAt DateTime? @updatedAt
+  updateAt DateTime? @updatedAt 
   image String?
   content String?
 }

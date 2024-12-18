@@ -19,10 +19,11 @@ async function getUserInfo(id){
               select: {
                 id: true,
                 Users: true
-              }
+              },
+              orderBy: {updateAt: 'asc'},
             }
         },
-        orderBy: {lastActive: 'desc'},
+        orderBy: {username: 'desc'},
         }
       },
   })
@@ -137,6 +138,16 @@ async function getConversation(conversationid, userid) {
 }
 
 async function sendMessage(conversationid, userid, content) {
+  await prisma.conversation.update({
+    where: {
+      id: conversationid
+    },
+    data: {
+      readBy: {
+        set: [],
+        },
+      },
+  })
   await prisma.message.create({
     data: {
       conversationId: conversationid,
