@@ -130,13 +130,15 @@ const sendMessage = async (req, res, next) => {
         download: true
       });
       try {
-        await db.sendPictureMessage(parseInt(req.params.conversationid), parseInt(req.user.id), data.publicUrl) 
+        await db.sendPictureMessage(parseInt(req.params.conversationid), parseInt(req.user.id), data.publicUrl, req.body.content) 
+        return res.status(200).json({message: "Success"})
       } catch (error) {
         return next(error)
       }
     } else {
       try {
       await db.sendMessage(parseInt(req.params.conversationid), parseInt(req.user.id), req.body.content)
+      return res.status(200).json({message: "Success"})
     } catch (error) {
       return next(error)
     }}
@@ -149,6 +151,7 @@ const updateMessage = async (req, res, next) => {
    
       try {
       await db.updateMessage(parseInt(req.params.messageid), req.user.id, req.body.content )
+      return res.status(200).json({message: "Success"})
     } catch (error) {
       return next(error)
     }
@@ -161,6 +164,7 @@ const deleteMessage = async (req, res, next) => {
    
       try {
       await db.deleteMessage(parseInt(req.params.messageid), req.user.id)
+      return res.status(200).json({message: "Success"})
     } catch (error) {
       return next(error)
     }

@@ -158,12 +158,13 @@ async function sendMessage(conversationid, userid, content) {
   )
 }
 
-async function sendPictureMessage(conversationid, userid, imageurl) {
+async function sendPictureMessage(conversationid, userid, imageurl, content) {
   await prisma.message.create({
     data: {
       conversationId: conversationid,
       authorId: userid,
-      image: imageurl
+      image: imageurl,
+      content: content,
     },
   }
   )
