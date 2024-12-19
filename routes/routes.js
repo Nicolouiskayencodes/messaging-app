@@ -15,8 +15,6 @@ router.post('/register', controller.authenticationController.register);
 router.get('/logout', controller.authenticationController.logout);
 router.get('/login-success', controller.authenticationController.loginSuccess);
 router.get('/login-failure', controller.authenticationController.loginFailure);
-router.get("/protected", controller.authenticationController.protected)
-
 
 router.get('/userinfo', controller.userController.getUserInfo)
 router.put('/updatename', controller.userController.changeName)

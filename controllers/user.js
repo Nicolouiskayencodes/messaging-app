@@ -191,7 +191,6 @@ const getUsers = async (req, res, next) => {
   if (req.user){
     try {
       const users = await db.getUsers(req.user.id)
-      console.log(users)
       return res.status(200).json(users)
     } catch (error) {
       return next(error)

@@ -45,9 +45,5 @@ const loginFailure =  (req, res, next) => {
   res.status(403).json({errors:[{msg:'Username or password did not match'}]})
 }
 
-const protected = (req, res) => {
-  res.json({user: req.user})
-}
-
 
 module.exports = {login, register, logout, loginSuccess, loginFailure, protected}

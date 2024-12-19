@@ -74,7 +74,6 @@ async function makeConversation(userarray) {
           
       }
     })
-    console.log(users)
     //This took me like an hour an a half to figure out - I probably could have made it easier by making the relation explicit and therefore queryable
     for(i=1; i<users.length; i++){
       if (!users[0].conversations.some(conversation => {return (conversation.Users.some(user => {return user.id === users[i].id}) && conversation.Users.length === users.length)})) {
@@ -106,7 +105,6 @@ async function makeConversation(userarray) {
 
 
 async function getConversation(conversationid, userid) {
-  console.log(conversationid)
   await prisma.conversation.update({
     where: {
       id: conversationid
