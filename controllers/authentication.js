@@ -46,4 +46,4 @@ const loginFailure =  (req, res, next) => {
 }
 
 
-module.exports = {login, register, logout, loginSuccess, loginFailure, protected}
+module.exports = {login, register, logout, loginSuccess, loginFailure}
