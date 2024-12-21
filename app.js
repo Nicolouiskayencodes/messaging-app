@@ -10,7 +10,7 @@ const cors = require('cors')
 
 const app = express();
 const corsOptions ={
-  origin: 'http://localhost:5173',
+  origin: 'https://nicos-messenger.netlify.app',
   credentials: true,            //access-control-allow-credentials:true
   optionSuccessStatus:200,
 }
