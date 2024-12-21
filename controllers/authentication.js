@@ -9,6 +9,7 @@ const login = passport.authenticate('local', {
 })
 
 const register = async (req, res, next) => {
+  if (req.body.username && req.body.password){
   bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
     if (err) {
       return next(err);
@@ -24,7 +25,9 @@ const register = async (req, res, next) => {
     } catch(err) {
       return next(err);
     }
-  })
+  })} else {
+    res.status(401).json({errors: 'Fields must be filled out'})
+  }
 }
 
 const logout = (req, res, next) => {
