@@ -3,10 +3,13 @@ const prisma = require('../db/prisma.js')
 const bcrypt = require('bcryptjs')
 const db = require('../db/queries.js')
 
-const login = passport.authenticate('local', {
-  successRedirect: "/login-success",
-  failureRedirect: "/login-failure"
-})
+const login = (req, res, next) => {
+  if (req.user) {
+    res.status(200).json(req.user);
+  } else {
+    res.status(403).json({errors:[{msg:'Username or password did not match'}]})
+  }
+}
 
 const register = async (req, res, next) => {
   if (req.body.username && req.body.password){
@@ -40,13 +43,13 @@ const logout = (req, res, next) => {
   );
 }
 
-const loginSuccess = (req, res, next) => {
-  res.status(200).json(req.user);
-}
+// const loginSuccess = (req, res, next) => {
+//   res.status(200).json(req.user);
+// }
 
-const loginFailure =  (req, res, next) => {
-  res.status(403).json({errors:[{msg:'Username or password did not match'}]})
-}
+// const loginFailure =  (req, res, next) => {
+//   res.status(403).json({errors:[{msg:'Username or password did not match'}]})
+// }
 
 
-module.exports = {login, register, logout, loginSuccess, loginFailure}
+module.exports = {login, register, logout, }

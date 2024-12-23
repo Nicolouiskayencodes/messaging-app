@@ -20,7 +20,7 @@ require('./config/passport')
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-
+app.set('trust proxy', 1)
 app.use(session({
   store: new PrismaSessionStore(
     prisma,
@@ -35,6 +35,8 @@ app.use(session({
   saveUninitialized: true,
   cookie: {
     maxAge: 7* 24 * 60 * 60 * 1000,
+    sameSite: 'none',
+    secure: true,
   }
 }));
 app.use(passport.initialize());

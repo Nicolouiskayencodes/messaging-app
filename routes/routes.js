@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const controller = require('../controllers')
+const passport = require('passport')
 const multer  = require('multer')
 const storage = multer.memoryStorage({
   filename: function (req, file, cb) {
@@ -10,7 +11,7 @@ const storage = multer.memoryStorage({
 });
 const upload = multer({ storage: storage })
 
-router.post('/login', controller.authenticationController.login);
+router.post('/login', passport.authenticate('local'),controller.authenticationController.login);
 router.post('/register', controller.authenticationController.register);
 router.get('/logout', controller.authenticationController.logout);
 router.get('/login-success', controller.authenticationController.loginSuccess);
