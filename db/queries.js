@@ -126,6 +126,7 @@ async function getConversation(conversationid, userid) {
       }}
     },
     include: {
+      Users: true,
       Messages: {
         include: {author: true},
       },
