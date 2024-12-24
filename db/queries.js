@@ -5,7 +5,6 @@ async function getUserInfo(id){
     where: {
       id: id
     },
-    omit: {password: true,},
     include: {
       conversations: {include: {Users: true, readBy: true},},
       friends: {
@@ -66,7 +65,6 @@ async function makeConversation(userarray) {
       where: {
         id: {in: userIds},
       },
-      omit: {password: true,},
       include: {
         conversations: {
           include: {
@@ -99,7 +97,7 @@ async function makeConversation(userarray) {
     } else {
       const conversation = await prisma.conversation.findUnique({ where: {
         id: conversationId,},
-        include: { Users: {omit: {password: true,},},},
+        include: { Users: true,},
       })
       return conversation;
     }
@@ -131,7 +129,6 @@ async function getConversation(conversationid, userid) {
       Messages: {
         include: {author: true},
       },
-      Users: {omit: {password: true,},},
     }
   })
   return conversation
@@ -228,7 +225,6 @@ async function getUsers(id) {
         id: id
       }
     },
-    omit: {password: true,},
   })
   return users
 }
