@@ -5,27 +5,28 @@ async function getUserInfo(id){
     where: {
       id: id
     },
-      include: {
-        conversations: {include: {Users: true, readBy: true},},
-        friends: {
-          select:{
-            id: true,
-            displayName: true,
-            username: true,
-            lastActive: true,
-            avatar: true,
-            conversations: {
-              where:{Users: {some:{id: id}}},
-              select: {
-                id: true,
-                Users: true
-              },
-              orderBy: {updateAt: 'asc'},
-            }
-        },
-        orderBy: {username: 'desc'},
-        }
+    omit: {password: true,},
+    include: {
+      conversations: {include: {Users: true, readBy: true},},
+      friends: {
+        select:{
+          id: true,
+          displayName: true,
+          username: true,
+          lastActive: true,
+          avatar: true,
+          conversations: {
+            where:{Users: {some:{id: id}}},
+            select: {
+              id: true,
+              Users: true
+            },
+            orderBy: {updateAt: 'asc'},
+          }
       },
+      orderBy: {username: 'desc'},
+      }
+    },
   })
   return user
 }
@@ -65,6 +66,7 @@ async function makeConversation(userarray) {
       where: {
         id: {in: userIds},
       },
+      omit: {password: true,},
       include: {
         conversations: {
           include: {
@@ -97,7 +99,7 @@ async function makeConversation(userarray) {
     } else {
       const conversation = await prisma.conversation.findUnique({ where: {
         id: conversationId,},
-        include: { Users: true,},
+        include: { Users: {omit: {password: true,},},},
       })
       return conversation;
     }
@@ -129,7 +131,7 @@ async function getConversation(conversationid, userid) {
       Messages: {
         include: {author: true},
       },
-      Users: true,
+      Users: {omit: {password: true,},},
     }
   })
   return conversation
@@ -225,7 +227,8 @@ async function getUsers(id) {
       NOT: {
         id: id
       }
-    }
+    },
+    omit: {password: true,},
   })
   return users
 }

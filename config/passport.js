@@ -16,6 +16,7 @@ passport.use(new LocalStrategy(
     if (!match) {
       return done(null, false, { message: "Incorrect password" })
     }
+    user.password = null;
     return done(null, user)
   } catch(err) {
     return done(err);
@@ -33,7 +34,8 @@ passport.deserializeUser(async(id,done)=>{
       data: {lastActive: new Date()}
     })
     const user = await prisma.user.findUnique({
-      where: {id: id}
+      where: {id: id},
+      omit: {password: true,},
     })
 
     done(null, user);

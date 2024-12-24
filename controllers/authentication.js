@@ -1,7 +1,5 @@
-const passport = require('passport');
 const prisma = require('../db/prisma.js')
 const bcrypt = require('bcryptjs')
-const db = require('../db/queries.js')
 
 const login = (req, res, next) => {
   if (req.user) {
@@ -42,14 +40,6 @@ const logout = (req, res, next) => {
   }
   );
 }
-
-// const loginSuccess = (req, res, next) => {
-//   res.status(200).json(req.user);
-// }
-
-// const loginFailure =  (req, res, next) => {
-//   res.status(403).json({errors:[{msg:'Username or password did not match'}]})
-// }
 
 
 module.exports = {login, register, logout, }

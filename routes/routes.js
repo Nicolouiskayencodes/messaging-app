@@ -14,8 +14,6 @@ const upload = multer({ storage: storage })
 router.post('/login', passport.authenticate('local'), controller.authenticationController.login);
 router.post('/register', controller.authenticationController.register);
 router.get('/logout', controller.authenticationController.logout);
-// router.get('/login-success', controller.authenticationController.loginSuccess);
-// router.get('/login-failure', controller.authenticationController.loginFailure);
 
 router.get('/userinfo', controller.userController.getUserInfo)
 router.put('/updatename', controller.userController.changeName)

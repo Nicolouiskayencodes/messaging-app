@@ -11,7 +11,7 @@ const cors = require('cors')
 const app = express();
 const corsOptions ={
   origin: 'https://nicos-messenger.netlify.app',
-  credentials: true,            //access-control-allow-credentials:true
+  credentials: true,            
   optionSuccessStatus:200,
 }
 app.use(cors(corsOptions));
